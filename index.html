@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Florería Valentina · Flores a domicilio en Los Andes</title>
+  <meta name="description" content="Ramos, cajas y arreglos florales en Los Andes. Elige tu regalo en pocos clics y confirma tu pedido por WhatsApp. Despacho y retiro en tienda.">
+  <meta name="theme-color" content="#FAF6F0">
+  <meta property="og:title" content="Florería Valentina · Los Andes">
+  <meta property="og:description" content="Flores que dicen lo que sientes. Despacho y retiro en Los Andes.">
+  <meta property="og:image" content="img/productos/hero.jpg">
+  <link rel="icon" href="img/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#app">Saltar al contenido</a>
+
+  <header class="site-header" id="header">
+    <div class="container header-inner">
+      <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mainNav">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+
+      <a href="#/" class="logo" aria-label="Florería Valentina, ir al inicio">
+        <img id="logoImg" src="img/logo-horizontal.png" alt="Florería Valentina" width="478" height="164">
+      </a>
+
+      <nav class="main-nav" id="mainNav" aria-label="Principal">
+        <a href="#/tienda" data-nav="tienda">Tienda</a>
+        <a href="#/ocasiones" data-nav="ocasiones">Ocasiones</a>
+        <a href="#/como-comprar" data-nav="como-comprar">Cómo comprar</a>
+        <a href="#/contacto" data-nav="contacto">Contacto</a>
+      </nav>
+
+      <a href="#/carrito" class="icon-btn cart-btn" aria-label="Ver carrito">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
+        <span class="cart-count" id="cartCount" aria-live="polite">0</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="app" tabindex="-1"></main>
+
+  <footer class="site-footer" id="footer"></footer>
+
+  <a class="wa-float" id="waFloat" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.5A12.4 12.4 0 0 0 5.3 22.3L3.6 28.5l6.4-1.7A12.4 12.4 0 1 0 16 3.5zm0 22.7c-1.9 0-3.8-.5-5.4-1.5l-.4-.2-3.8 1 1-3.7-.3-.4A10.3 10.3 0 1 1 16 26.2zm5.7-7.7c-.3-.2-1.8-.9-2.1-1s-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7 0a8.4 8.4 0 0 1-4.2-3.6c-.3-.5.3-.5.9-1.6.1-.2 0-.4 0-.5l-1-2.3c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5 1.9.8 2.6.9 3.6.7.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4l-.2-.4z"/></svg>
+  </a>
+
+  <div class="modal" id="modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle" id="modalPanel" tabindex="-1"></div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
