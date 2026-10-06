@@ -153,7 +153,7 @@
     : `<p class="price"><small>desde</small>${fmt(p.precio)}</p>`;
 
   function productCard(p) {
-    const tags = p.ocasiones.slice(0, 2).map((o) => `<span class="tag">${esc(ocasionById[o].nombre)}</span>`).join('');
+    const tags = p.ocasiones.slice(0, 2).map((o) => `<span class="tag">${esc(ocasionById[o].etiqueta || ocasionById[o].nombre)}</span>`).join('');
     return `
       <article class="card reveal">
         <a class="card-img" href="#/producto/${p.id}" aria-label="${esc(p.nombre)}">
@@ -389,7 +389,7 @@
 
   /* ---------------- Páginas ---------------- */
   const STEPS = [
-    { icon: 'bouquet', t: 'Elige tu arreglo', d: 'Busca por ocasión o tipo y agrégalo al carrito.' },
+    { icon: 'bouquet', t: 'Elige tu arreglo', d: 'Busca por categoría o tipo y agrégalo al carrito.' },
     { icon: 'form', t: 'Completa los datos de entrega', d: 'Quién envía, quién recibe, fecha y dedicatoria.' },
     { icon: 'chat', t: 'Confirma por WhatsApp', d: 'Te llega el pedido armado; confirmamos stock y pago.' },
     { icon: 'gift', t: 'Recibe o retira tu pedido', d: 'Despachamos en Los Andes o lo retiras en tienda.' },
@@ -434,13 +434,14 @@
       <section class="occasions" aria-labelledby="oc-title">
         <div class="container">
           <div class="section-head">
-            <h2 class="section-title section-title--plain" id="oc-title">¿Para qué ocasión?</h2>
-            <p class="section-sub">Toca una y te mostramos los arreglos ideales.</p>
+            <h2 class="section-title section-title--plain" id="oc-title">Categorías</h2>
+            <p class="section-sub">Elige una y te mostramos los arreglos ideales.</p>
           </div>
           <div class="occasion-grid">
             ${OCASIONES.map((o) => `
               <a class="occasion-card" href="#/tienda?ocasion=${o.id}">
-                <span class="emo" aria-hidden="true">${o.emoji}</span>${esc(o.nombre)}
+                <span class="emo" aria-hidden="true">${o.emoji}</span>
+                <span class="oc-text">${esc(o.nombre)}<small>${esc(o.desc)}</small></span>
               </a>`).join('')}
           </div>
         </div>
@@ -525,8 +526,8 @@
         </section>
         <div class="filters">
           <div class="container">
-            <div class="filter-row" role="group" aria-label="Filtrar por ocasión">
-              <button class="chip" data-f="ocasion" data-v="" aria-pressed="${!f.ocasion}">Todas las ocasiones</button>
+            <div class="filter-row" role="group" aria-label="Filtrar por categoría">
+              <button class="chip" data-f="ocasion" data-v="" aria-pressed="${!f.ocasion}">Todas las categorías</button>
               ${OCASIONES.map((o) => `<button class="chip" data-f="ocasion" data-v="${o.id}" aria-pressed="${f.ocasion === o.id}"><span aria-hidden="true">${o.emoji}</span> ${esc(o.nombre)}</button>`).join('')}
             </div>
             <div class="filter-row" role="group" aria-label="Filtrar por tipo">
@@ -553,8 +554,11 @@
       mount() {
         const draw = () => {
           const list = filterProducts(f);
+          const oc = f.ocasion && !f.cat ? ocasionById[f.ocasion] : null; // categoría aún sin productos publicados
           $('#shopGrid').innerHTML = list.length
             ? list.map(productCard).join('')
+            : oc
+            ? `<div class="empty" style="grid-column:1/-1"><h2>${esc(oc.nombre)} a pedido</h2><p>Los arreglos de esta categoría los preparamos a pedido. Escríbenos y lo diseñamos contigo.</p><a class="btn" href="${waLink(`Hola, quisiera cotizar un arreglo de la categoría ${oc.nombre} 🌸`)}" target="_blank" rel="noopener">Cotizar por WhatsApp</a></div>`
             : `<div class="empty" style="grid-column:1/-1"><h2>Sin resultados</h2><p>No tenemos arreglos con esa combinación, pero podemos crearlo para ti.</p><a class="btn" href="${waLink('Hola, quisiera un arreglo personalizado 🌸')}" target="_blank" rel="noopener">Pedir uno a medida</a></div>`;
           $('#shopCount').textContent = `${list.length} ${list.length === 1 ? 'producto' : 'productos'}`;
           const h2 = shopHeading(f);
@@ -580,12 +584,12 @@
   /* ----- Ocasiones ----- */
   function pageOccasions() {
     return {
-      title: 'Ocasiones',
+      title: 'Categorías',
       html: `
         <section class="page-head">
           <div class="container">
-            <p class="crumbs"><a href="#/">Inicio</a> / Ocasiones</p>
-            <h1>Ocasiones</h1>
+            <p class="crumbs"><a href="#/">Inicio</a> / Categorías</p>
+            <h1>Categorías</h1>
             <p>¿No sabes qué regalar? Empieza por el motivo.</p>
           </div>
         </section>
@@ -598,7 +602,8 @@
                 <a class="occasion-tile reveal" href="#/tienda?ocasion=${o.id}">
                   <div class="img"><img src="${o.foto}" alt="" loading="lazy" width="720" height="900"></div>
                   <h3>${esc(o.nombre)}</h3>
-                  <p>${esc(o.desc)} · ${n} arreglos</p>
+                  <p>${esc(o.desc)}</p>
+                  <p class="count">${n ? `${n} ${n === 1 ? 'arreglo' : 'arreglos'}` : 'A pedido'}</p>
                 </a>`;
               }).join('')}
             </div>
@@ -750,7 +755,7 @@
               <a class="btn" href="#/tienda">Ver arreglos</a>
             </div>
             <div class="occasion-grid" style="max-width:760px;margin:0 auto 70px">
-              ${OCASIONES.map((o) => `<a class="occasion-card" href="#/tienda?ocasion=${o.id}"><span class="emo" aria-hidden="true">${o.emoji}</span>${esc(o.nombre)}</a>`).join('')}
+              ${OCASIONES.map((o) => `<a class="occasion-card" href="#/tienda?ocasion=${o.id}"><span class="emo" aria-hidden="true">${o.emoji}</span><span class="oc-text">${esc(o.nombre)}</span></a>`).join('')}
             </div>
           </div>`,
       };
@@ -1322,6 +1327,7 @@
     switch (route) {
       case '': page = { title: '', html: pageHome() }; break;
       case 'tienda': page = pageShop(params); break;
+      case 'categorias':
       case 'ocasiones': page = pageOccasions(); break;
       case 'producto': page = pageProduct(parts[1]); break;
       case 'carrito': page = pageCart(); break;

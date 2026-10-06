@@ -7,7 +7,9 @@
    · Precios: número entero en pesos, SIN puntos (25000 = $25.000).
    · Fotos: ruta a la imagen dentro de /img/productos. La primera foto
      es la principal; las siguientes aparecen en la galería del detalle.
-   · ocasiones: ids de la lista OCASIONES (puede tener varias).
+   · ocasiones: categorías principales en las que aparece el producto, con
+     los ids de la lista OCASIONES (puede tener varias): 'amor' |
+     'cumpleanos' | 'nacimiento' | 'novias' | 'condolencias' | 'toda-ocasion'.
    · tamanos (opcional): si el producto viene en varios tamaños, cada uno
      con su propio precio. El precio "desde" es el del primer tamaño.
    · destacado: true → aparece en "Más vendidos" del inicio.
@@ -62,14 +64,17 @@ const AVISOS = {
   artesanal: 'Cada arreglo es elaborado artesanalmente. Algunas flores, follajes o detalles pueden variar según disponibilidad de temporada, manteniendo siempre el estilo, tonalidad y valor del diseño elegido.',
 };
 
+// Categorías principales del catálogo (inicio, filtros de la tienda y página Categorías).
+// · etiqueta (opcional): nombre corto para la etiqueta sobre la foto del producto.
+// · 'toda-ocasion' es la categoría general: úsala en los productos que no son
+//   exclusivos de una ocasión (agradecimientos, felicitaciones, visitas, "porque sí").
 const OCASIONES = [
-  { id: 'cumpleanos',     nombre: 'Cumpleaños',     emoji: '🎂', desc: 'Para celebrar un año más',        foto: 'img/productos/arreglo-cumpleanos.jpg' },
-  { id: 'amor',           nombre: 'Amor',           emoji: '❤️', desc: 'Para decir te amo sin palabras',  foto: 'img/productos/caja-corazon-dulce.jpg' },
-  { id: 'aniversario',    nombre: 'Aniversario',    emoji: '💕', desc: 'Para celebrar lo que construyen', foto: 'img/productos/rosas-rojas.jpg' },
-  { id: 'nacimiento',     nombre: 'Nacimiento',     emoji: '👶', desc: 'Para dar la bienvenida',          foto: 'img/productos/bienvenida-princesa.jpg' },
-  { id: 'agradecimiento', nombre: 'Agradecimiento', emoji: '🌷', desc: 'Para decir gracias',              foto: 'img/productos/gerberas-alegres.jpg' },
-  { id: 'condolencias',   nombre: 'Condolencias',   emoji: '🤍', desc: 'Para acompañar con respeto',      foto: 'img/productos/corona-paz-eterna.jpg' },
-  { id: 'otra',           nombre: 'Otra ocasión',   emoji: '✨', desc: 'Graduaciones, días especiales y más', foto: 'img/productos/arreglo-graduacion.jpg' },
+  { id: 'amor',         nombre: 'Amor y aniversario',      etiqueta: 'Amor',         emoji: '❤️', desc: 'Ramos, cajas, corazones y arreglos románticos.',                                    foto: 'img/productos/caja-corazon-dulce.jpg' },
+  { id: 'cumpleanos',   nombre: 'Cumpleaños',                                        emoji: '🎂', desc: 'Opciones alegres, globos, chocolates y arreglos para celebrar.',                    foto: 'img/productos/arreglo-cumpleanos.jpg' },
+  { id: 'nacimiento',   nombre: 'Nacimientos',                                       emoji: '👶', desc: 'Arreglos delicados, con posibilidad de agregar globo y/o tarjeta.',                 foto: 'img/productos/bienvenida-princesa.jpg' },
+  { id: 'novias',       nombre: 'Novias',                                            emoji: '👰🏻', desc: 'Ramos de novia, boutonnières, prendidos y otros arreglos para tu matrimonio.',       foto: 'img/productos/encanto-rosa.jpg' },
+  { id: 'condolencias', nombre: 'Condolencias / Fúnebres', etiqueta: 'Condolencias', emoji: '🤍', desc: 'Coronas, arreglos de condolencias y opciones para cementerio.',                     foto: 'img/productos/corona-paz-eterna.jpg' },
+  { id: 'toda-ocasion', nombre: 'Toda ocasión',                                      emoji: '🌷', desc: 'Para agradecer, felicitar, visitar, tener un detalle o regalar “porque sí”.',       foto: 'img/productos/gerberas-alegres.jpg' },
 ];
 
 const CATEGORIAS = [
@@ -87,108 +92,108 @@ const P = 'img/productos/';
 const PRODUCTOS = [
   /* ---------------- RAMOS FLORALES ---------------- */
   { id: 'ramo-valentina', nombre: 'Ramo Valentina', categoria: 'ramos',
-    ocasiones: ['amor', 'aniversario', 'cumpleanos'],
+    ocasiones: ['amor', 'cumpleanos'],
     precio: 25000, destacado: true,
     desc: 'Rosas rojas y blancas con paniculata, nuestro clásico de la casa.',
     fotos: [P + 'ramo-valentina.jpg', P + 'ramo-valentina-2.jpg'],
     tamanos: [{ nombre: '12 rosas', precio: 25000 }, { nombre: '18 rosas', precio: 33000 }, { nombre: '24 rosas', precio: 42000 }] },
 
   { id: 'rosas-rojas-clasicas', nombre: 'Rosas Rojas Clásicas', categoria: 'ramos',
-    ocasiones: ['amor', 'aniversario', 'cumpleanos'],
+    ocasiones: ['amor', 'cumpleanos'],
     precio: 22000, destacado: true,
     desc: 'Rosas rojas envueltas en papel negro, elegancia pura.',
     fotos: [P + 'rosas-rojas.jpg', P + 'rosas-rojas-2.jpg'],
     tamanos: [{ nombre: '12 rosas', precio: 22000 }, { nombre: '24 rosas', precio: 38000 }] },
 
   { id: 'rosas-rosadas', nombre: 'Rosas Rosadas Dulzura', categoria: 'ramos',
-    ocasiones: ['cumpleanos', 'agradecimiento', 'amor'],
+    ocasiones: ['cumpleanos', 'toda-ocasion', 'amor'],
     precio: 20000,
     desc: 'Rosas rosadas suaves con follaje fresco y paniculata.',
     fotos: [P + 'rosas-rosadas.jpg'] },
 
   { id: 'girasoles-del-sol', nombre: 'Girasoles del Sol', categoria: 'ramos',
-    ocasiones: ['cumpleanos', 'agradecimiento', 'otra'],
+    ocasiones: ['cumpleanos', 'toda-ocasion'],
     precio: 18000, destacado: true,
     desc: 'Girasoles luminosos con toques rosados, pura alegría.',
     fotos: [P + 'girasoles-del-sol.jpg', P + 'girasoles-del-sol-2.jpg'],
     tamanos: [{ nombre: 'Mediano', precio: 18000 }, { nombre: 'Grande', precio: 26000 }] },
 
   { id: 'sol-y-pasion', nombre: 'Sol y Pasión', categoria: 'ramos',
-    ocasiones: ['amor', 'cumpleanos', 'aniversario'],
+    ocasiones: ['amor', 'cumpleanos'],
     precio: 28000,
     desc: 'Girasoles y rosas rojas en un ramo lleno de energía.',
     fotos: [P + 'sol-y-pasion.jpg', P + 'sol-y-pasion-2.jpg'] },
 
   { id: 'gerberas-alegres', nombre: 'Gerberas Alegres', categoria: 'ramos',
-    ocasiones: ['cumpleanos', 'agradecimiento', 'otra'],
+    ocasiones: ['cumpleanos', 'toda-ocasion'],
     precio: 16000, destacado: true,
     desc: 'Gerberas en tonos rosados, frescas y coloridas.',
     fotos: [P + 'gerberas-alegres.jpg', P + 'gerberas-alegres-2.jpg', P + 'gerberas-alegres-3.jpg'] },
 
   { id: 'jardin-primaveral', nombre: 'Jardín Primaveral', categoria: 'ramos',
-    ocasiones: ['cumpleanos', 'agradecimiento', 'otra'],
+    ocasiones: ['cumpleanos', 'toda-ocasion'],
     precio: 19000,
     desc: 'Ramo mixto de gerberas, rosas y flores de estación.',
     fotos: [P + 'jardin-primaveral.jpg', P + 'jardin-primaveral-2.jpg'] },
 
   { id: 'encanto-rosa', nombre: 'Encanto Rosa', categoria: 'ramos',
-    ocasiones: ['cumpleanos', 'amor', 'agradecimiento'],
+    ocasiones: ['cumpleanos', 'amor', 'toda-ocasion'],
     precio: 21000,
     desc: 'Rosas, lisianthus y flores blancas en papel rosado.',
     fotos: [P + 'encanto-rosa.jpg', P + 'encanto-rosa-2.jpg'] },
 
   /* ---------------- CAJAS FLORALES ---------------- */
   { id: 'caja-corazon-dulce', nombre: 'Caja Corazón Dulce', categoria: 'cajas',
-    ocasiones: ['amor', 'aniversario', 'cumpleanos'],
+    ocasiones: ['amor', 'cumpleanos'],
     precio: 32000, destacado: true,
     desc: 'Caja corazón con rosas rojas y bombones Ferrero Rocher.',
     fotos: [P + 'caja-corazon-dulce.jpg', P + 'caja-corazon-dulce-2.jpg'] },
 
   { id: 'caja-corazon-pasion', nombre: 'Corazón Pasión', categoria: 'cajas',
-    ocasiones: ['amor', 'aniversario'],
+    ocasiones: ['amor'],
     precio: 45000,
     desc: 'Gran corazón de rosas rojas con Ferrero, para sorprender.',
     fotos: [P + 'caja-corazon-pasion.jpg'] },
 
   { id: 'caja-sol-chocolate', nombre: 'Sol y Chocolate', categoria: 'cajas',
-    ocasiones: ['cumpleanos', 'amor', 'agradecimiento'],
+    ocasiones: ['cumpleanos', 'amor', 'toda-ocasion'],
     precio: 35000,
     desc: 'Girasol, rosas rojas y un cajón de bombones Ferrero.',
     fotos: [P + 'caja-sol-chocolate.jpg', P + 'caja-sol-chocolate-2.jpg'] },
 
   { id: 'sombrerera-clasica', nombre: 'Sombrerera Clásica', categoria: 'cajas',
-    ocasiones: ['amor', 'aniversario', 'cumpleanos'],
+    ocasiones: ['amor', 'cumpleanos'],
     precio: 30000,
     desc: 'Sombrerera blanca con rosas rojas y bombones.',
     fotos: [P + 'sombrerera-clasica.jpg', P + 'sombrerera-clasica-2.jpg'] },
 
   { id: 'corazon-girasoles', nombre: 'Corazón de Girasoles', categoria: 'cajas',
-    ocasiones: ['cumpleanos', 'aniversario', 'agradecimiento'],
+    ocasiones: ['cumpleanos', 'amor', 'toda-ocasion'],
     precio: 34000,
     desc: 'Caja corazón con girasoles, rosa roja y Ferrero.',
     fotos: [P + 'corazon-girasoles.jpg'] },
 
   { id: 'sombrerera-dorada', nombre: 'Sombrerera Dorada', categoria: 'cajas',
-    ocasiones: ['cumpleanos', 'agradecimiento', 'otra'],
+    ocasiones: ['cumpleanos', 'toda-ocasion'],
     precio: 36000,
     desc: 'Girasoles en sombrerera negra con corazón de Ferrero.',
     fotos: [P + 'sombrerera-dorada.jpg'] },
 
   /* ---------------- ARREGLOS FLORALES ---------------- */
   { id: 'arreglo-sol-radiante', nombre: 'Arreglo Sol Radiante', categoria: 'arreglos',
-    ocasiones: ['cumpleanos', 'aniversario', 'agradecimiento'],
+    ocasiones: ['cumpleanos', 'amor', 'toda-ocasion'],
     precio: 38000, destacado: true,
     desc: 'Girasoles, rosas rojas y bombones en base alta.',
     fotos: [P + 'arreglo-sol-radiante.jpg'] },
 
   { id: 'arreglo-romance', nombre: 'Arreglo Romance', categoria: 'arreglos',
-    ocasiones: ['amor', 'aniversario', 'cumpleanos'],
+    ocasiones: ['amor', 'cumpleanos'],
     precio: 32000,
     desc: 'Rosas rosadas y fucsias con paniculata en base.',
     fotos: [P + 'arreglo-romance.jpg'] },
 
   { id: 'arreglo-te-amo', nombre: 'Te Amo con Peluche', categoria: 'arreglos',
-    ocasiones: ['amor', 'aniversario'],
+    ocasiones: ['amor'],
     precio: 42000,
     desc: 'Rosas, gerberas, peluche y globos "Te amo".',
     fotos: [P + 'arreglo-te-amo.jpg'] },
@@ -200,13 +205,13 @@ const PRODUCTOS = [
     fotos: [P + 'arreglo-cumpleanos.jpg'] },
 
   { id: 'arreglo-celebracion', nombre: 'Arreglo Celebración', categoria: 'arreglos',
-    ocasiones: ['cumpleanos', 'agradecimiento', 'otra'],
+    ocasiones: ['cumpleanos', 'toda-ocasion'],
     precio: 34000,
     desc: 'Rosas blancas, liliums y alstroemerias con globo.',
     fotos: [P + 'arreglo-celebracion.jpg'] },
 
   { id: 'arreglo-primavera', nombre: 'Arreglo Primavera', categoria: 'arreglos',
-    ocasiones: ['agradecimiento', 'cumpleanos', 'otra'],
+    ocasiones: ['toda-ocasion', 'cumpleanos'],
     precio: 28000,
     desc: 'Crisantemos blancos, amarillos y rosas rojas.',
     fotos: [P + 'arreglo-primavera.jpg'] },
@@ -287,56 +292,56 @@ const PRODUCTOS = [
 
   /* ---------------- PERSONALIZADOS ---------------- */
   { id: 'sombrerera-azul-girasoles', nombre: 'Azul y Girasoles', categoria: 'personalizados',
-    ocasiones: ['cumpleanos', 'otra', 'agradecimiento'],
+    ocasiones: ['cumpleanos', 'toda-ocasion'],
     precio: 40000, destacado: true,
     desc: 'Sombrerera con rosas azules y girasoles.',
     fotos: [P + 'sombrerera-azul-girasoles.jpg', P + 'sombrerera-azul-girasoles-2.jpg'] },
 
   { id: 'caja-azul-sol', nombre: 'Caja Azul y Sol', categoria: 'personalizados',
-    ocasiones: ['cumpleanos', 'otra'],
+    ocasiones: ['cumpleanos', 'toda-ocasion'],
     precio: 28000,
     desc: 'Caja negra con rosas azules y girasoles.',
     fotos: [P + 'caja-azul-sol.jpg'] },
 
   { id: 'corazon-azul-ferrero', nombre: 'Corazón Azul', categoria: 'personalizados',
-    ocasiones: ['amor', 'aniversario', 'otra'],
+    ocasiones: ['amor', 'toda-ocasion'],
     precio: 42000,
     desc: 'Caja corazón de rosas azules con Ferrero Rocher.',
     fotos: [P + 'corazon-azul-ferrero.jpg'] },
 
   { id: 'arreglo-graduacion', nombre: 'Arreglo Graduación', categoria: 'personalizados',
-    ocasiones: ['otra'],
+    ocasiones: ['toda-ocasion'],
     precio: 32000,
     desc: 'Rosas azules y blancas con birrete y globo estrella.',
     fotos: [P + 'arreglo-graduacion.jpg'] },
 
   { id: 'caja-recuerdos-fotos', nombre: 'Caja Recuerdos', categoria: 'personalizados',
-    ocasiones: ['amor', 'aniversario', 'cumpleanos'],
+    ocasiones: ['amor', 'cumpleanos'],
     precio: 45000,
     desc: 'Rosas azules, bombones, globo y tus fotos impresas.',
     fotos: [P + 'caja-recuerdos-fotos.jpg'] },
 
   { id: 'globo-personalizado', nombre: 'Globo con Nombre', categoria: 'personalizados',
-    ocasiones: ['cumpleanos', 'amor', 'otra'],
+    ocasiones: ['cumpleanos', 'amor', 'toda-ocasion'],
     precio: 38000,
     desc: 'Globo burbuja con nombre, rosas azules y peluche.',
     fotos: [P + 'globo-personalizado.jpg'] },
 
   { id: 'caja-papa', nombre: 'Caja Para Él', categoria: 'personalizados',
-    ocasiones: ['cumpleanos', 'otra'],
+    ocasiones: ['cumpleanos', 'toda-ocasion'],
     precio: 35000,
     desc: 'Rosas azules, cervezas y bombones en caja de madera.',
     fotos: [P + 'caja-papa.jpg'] },
 
   /* ---------------- EXTRAS ---------------- */
   { id: 'ferrero-corazon', nombre: 'Ferrero Rocher corazón', categoria: 'extras', extra: 'bombones',
-    ocasiones: ['amor', 'aniversario', 'cumpleanos'],
+    ocasiones: ['amor', 'cumpleanos'],
     precio: 9000, sinDesde: true,
     desc: 'Caja corazón de 8 bombones Ferrero Rocher.',
     fotos: [P + 'ferrero-corazon.jpg'] },
 
   { id: 'ferrero-8', nombre: 'Ferrero Rocher caja de 8', categoria: 'extras', extra: 'bombones',
-    ocasiones: ['cumpleanos', 'agradecimiento', 'otra'],
+    ocasiones: ['cumpleanos', 'toda-ocasion'],
     precio: 7000, sinDesde: true,
     desc: 'Caja clásica de 8 bombones Ferrero Rocher.',
     fotos: [P + 'ferrero-8.jpg'] },
@@ -348,31 +353,31 @@ const PRODUCTOS = [
     fotos: [P + 'globo-cumpleanos.jpg'] },
 
   { id: 'globo-aniversario', nombre: 'Globos Aniversario y corazón', categoria: 'extras', extra: 'globos',
-    ocasiones: ['aniversario', 'amor'],
+    ocasiones: ['amor'],
     precio: 6500, sinDesde: true,
     desc: 'Globo "Feliz aniversario" más globo corazón rojo.',
     fotos: [P + 'globo-aniversario.jpg'] },
 
   { id: 'globo-mama', nombre: 'Globo Feliz día mamá', categoria: 'extras', extra: 'globos',
-    ocasiones: ['otra'],
+    ocasiones: ['toda-ocasion'],
     precio: 4500, sinDesde: true,
     desc: 'Globo corazón metalizado con helio.',
     fotos: [P + 'globo-mama.jpg'] },
 
   { id: 'peluche-te-amo', nombre: 'Oso "Te amo"', categoria: 'extras', extra: 'peluches',
-    ocasiones: ['amor', 'aniversario'],
+    ocasiones: ['amor'],
     precio: 10000, sinDesde: true,
     desc: 'Oso de peluche con corazón "Te amo".',
     fotos: [P + 'peluche-te-amo-blanco.jpg', P + 'peluche-te-amo.jpg'] },
 
   { id: 'peluche-te-quiero', nombre: 'Oso "Te quiero"', categoria: 'extras', extra: 'peluches',
-    ocasiones: ['amor', 'cumpleanos', 'agradecimiento'],
+    ocasiones: ['amor', 'cumpleanos', 'toda-ocasion'],
     precio: 10000, sinDesde: true,
     desc: 'Oso de peluche con corazón "Te quiero".',
     fotos: [P + 'peluche-te-quiero.jpg'] },
 
   { id: 'chupete-chocolate', nombre: 'Chupete de chocolate', categoria: 'extras', extra: 'bombones',
-    ocasiones: ['cumpleanos', 'amor', 'otra'],
+    ocasiones: ['cumpleanos', 'amor', 'toda-ocasion'],
     precio: 3500, sinDesde: true,
     desc: 'Chupete corazón de chocolate con decoración.',
     fotos: [P + 'chupete-chocolate.jpg'] },
