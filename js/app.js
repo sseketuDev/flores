@@ -99,7 +99,7 @@
 
   const PERSO_LABELS = {
     colores: 'Colores', favoritas: 'Flores favoritas', evitar: 'Evitar',
-    presupuesto: 'Presupuesto', notas: 'Notas', texto: 'Texto del tazón',
+    presupuesto: 'Presupuesto', notas: 'Notas',
   };
   const persoText = (perso, sep = ' | ') => perso
     ? Object.entries(perso).map(([k, v]) => `${PERSO_LABELS[k] || k}: ${v}`).join(sep)
@@ -172,8 +172,8 @@
       </article>`;
   }
 
-  const EXTRA_KIND = { bombones: 'Bombones', globos: 'Globos', peluches: 'Peluches', tazones: 'Tazón' };
-  const EXTRA_ORDER = ['bombones', 'globos', 'peluches', 'tazones'];
+  const EXTRA_KIND = { bombones: 'Bombones', globos: 'Globos', peluches: 'Peluches' };
+  const EXTRA_ORDER = ['bombones', 'globos', 'peluches'];
   const upsellItems = () => PRODUCTOS
     .filter((p) => EXTRA_ORDER.includes(p.extra))
     .sort((a, b) => EXTRA_ORDER.indexOf(a.extra) - EXTRA_ORDER.indexOf(b.extra));
@@ -186,9 +186,7 @@
         <span class="u-name">${esc(p.nombre)}</span>
         <span class="u-price">${fmt(p.precio)}</span>
         <div class="u-actions">
-          ${p.textoPersonalizado
-            ? `<button class="btn btn--sm" data-customize="${p.id}">Personalizar</button>`
-            : `<button class="btn btn--sm" data-upsell-add="${p.id}">+ Agregar</button>`}
+          <button class="btn btn--sm" data-upsell-add="${p.id}">+ Agregar</button>
         </div>
       </div>`).join('');
     const inner = `
@@ -202,11 +200,18 @@
     return wrap ? `<section class="section-upsell">${inner}</section>` : inner;
   }
 
+  // Aviso de elaboración artesanal (producto, carrito, checkout, cómo comprar, políticas)
   const NATURE_NOTE = `
     <aside class="nature-note">
       ${icon('flower')}
-      <p>Las flores son productos naturales; variedades y tonalidades pueden variar según disponibilidad, manteniendo siempre el estilo y valor del arreglo.</p>
+      <div>
+        <strong class="nature-note-title">Aviso importante</strong>
+        <p>${esc(AVISOS.artesanal)}</p>
+      </div>
     </aside>`;
+  // Aviso breve de disponibilidad de flores (tienda, inicio, modales, confirmación, footer)
+  const flowerNote = (cls = '') => `<p class="flower-note ${cls}">${icon('flower')}<span>${esc(AVISOS.flores)}</span></p>`;
+  const cartHasFlowers = () => cart.some((it) => !isExtra(byId[it.id]));
 
   const COLOR_SUGERENCIAS = ['Rojos', 'Rosados', 'Blancos', 'Amarillos', 'Pasteles', 'Azules'];
   const PRESUPUESTOS = ['El precio indicado', 'Hasta $25.000', '$25.000 – $40.000', '$40.000 – $60.000', 'Más de $60.000'];
@@ -284,7 +289,6 @@
   function openCustomizeModal(id, editUid = null) {
     const p = byId[id];
     const item = editUid ? cart.find((it) => it.uid === editUid) : null;
-    if (p.textoPersonalizado) return openTextModal(p, item);
     const v = (item && item.perso) || {};
     openModal(`
       <h2 id="modalTitle">Personaliza tu arreglo</h2>
@@ -297,6 +301,7 @@
         ${sizeOptions(p, item && item.size, 'm-size')}
         ${p.tamanos ? '<div style="height:18px"></div>' : ''}
         ${persoFields(v, 'pm')}
+        ${isExtra(p) ? '' : flowerNote('flower-note--start flower-note--gap')}
         <div class="modal-actions">
           <button class="btn" type="submit">${item ? 'Guardar cambios' : 'Guardar y agregar'}</button>
           <button class="btn btn--outline" type="button" data-close>Cancelar</button>
@@ -319,41 +324,8 @@
     });
   }
 
-  function openTextModal(p, item) {
-    const v = (item && item.perso && item.perso.texto) || '';
-    openModal(`
-      <h2 id="modalTitle">Personaliza tu tazón</h2>
-      <p class="modal-sub">Escribe el nombre o la frase que quieres en el tazón.</p>
-      <form id="textForm" novalidate>
-        <div class="field">
-          <label for="tz-texto">Nombre o frase</label>
-          <input class="input" id="tz-texto" name="texto" maxlength="40" value="${esc(v)}" placeholder="Ej: La mejor mamá del mundo">
-          <p class="counter" id="tz-count">${v.length}/40</p>
-          <p class="field-error">${icon('alert')} Escribe un nombre o frase para el tazón.</p>
-        </div>
-        <p class="pickup-box" style="margin-top:6px">También puedes enviarnos tu foto o diseño por WhatsApp después de confirmar el pedido.</p>
-        <div class="modal-actions">
-          <button class="btn" type="submit">${item ? 'Guardar cambios' : `Agregar tazón · ${fmt(p.precio)}`}</button>
-          <button class="btn btn--outline" type="button" data-close>Cancelar</button>
-        </div>
-      </form>`);
-    const input = $('#tz-texto');
-    input.addEventListener('input', () => { $('#tz-count').textContent = `${input.value.length}/40`; input.closest('.field').classList.remove('has-error'); });
-    $('#textForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const texto = input.value.trim();
-      if (!texto) { input.closest('.field').classList.add('has-error'); input.focus(); return; }
-      if (item) { item.perso = { texto }; saveCart(); closeModal(); render(); toast('Tazón actualizado'); return; }
-      addToCart(p.id, { perso: { texto } });
-      closeModal();
-      toast('Tazón personalizado agregado');
-      renderCartPreserveScroll();
-      markUpsellDone(p.id);
-    });
-  }
-
   function markUpsellDone(id) {
-    $$(`[data-upsell-add="${id}"], .upsell-item [data-customize="${id}"]`).forEach((b) => {
+    $$(`[data-upsell-add="${id}"]`).forEach((b) => {
       const label = b.textContent;
       b.classList.add('is-done');
       b.textContent = '✓ Agregado';
@@ -446,7 +418,7 @@
           <div class="hero-text">
             <span class="eyebrow">Florería en Los Andes</span>
             <h1>Flores que dicen <em>lo que sientes</em></h1>
-            <p>Ramos, cajas y arreglos hechos a mano. Elige tu regalo en pocos clics y lo coordinamos contigo por WhatsApp.</p>
+            <p>Ramos, cajas y arreglos hechos a mano. Elige tu regalo en pocos clics, envíanos tu pedido y finalizamos la compra contigo por WhatsApp.</p>
             <a href="#/tienda" class="btn btn--lg">Ver arreglos</a>
             <div class="hero-meta">
               <span>${icon('truck')} Despacho en Los Andes</span>
@@ -508,6 +480,7 @@
             <h2 class="section-title" id="best-title">Más vendidos</h2>
           </div>
           <div class="product-grid">${destacados.map(productCard).join('')}</div>
+          ${flowerNote('flower-note--gap')}
           <div style="text-align:center;margin-top:36px"><a class="btn btn--outline" href="#/tienda">Ver toda la tienda</a></div>
         </div>
       </section>
@@ -573,6 +546,7 @@
               </select>
             </label>
           </div>
+          ${flowerNote('flower-note--start flower-note--shop')}
           <div class="product-grid" id="shopGrid"></div>
           <div style="height:60px"></div>
         </div>`,
@@ -658,27 +632,24 @@
               <h1>${esc(p.nombre)}</h1>
               <div class="tags">${p.ocasiones.map((o) => `<a class="tag" href="#/tienda?ocasion=${o}" style="text-decoration:none">${esc(ocasionById[o].nombre)}</a>`).join('')}</div>
               <p class="detail-price" id="dPrice">${p.sinDesde ? '' : '<small>desde </small>'}${fmt(p.precio)}</p>
-              <p class="detail-desc">${esc(p.desc)}</p>
+              <p class="detail-desc">${esc(p.detalle || p.desc)}</p>
 
               <form id="buyForm" novalidate>
                 ${sizeOptions(p)}
-                ${p.textoPersonalizado ? '' : `
                 <details class="customize" id="customize">
                   <summary>
                     <span>¿Quieres personalizarlo?<span class="hint">Colores, tipo de flor, presupuesto o ideas.</span></span>
                     <span class="plus" aria-hidden="true">+</span>
                   </summary>
                   <div class="customize-body">${persoFields()}</div>
-                </details>`}
+                </details>
                 <div class="buy-row">
-                  ${p.textoPersonalizado ? '' : `<div class="qty" aria-label="Cantidad">
+                  <div class="qty" aria-label="Cantidad">
                     <button type="button" data-dq="-1" aria-label="Quitar uno">−</button>
                     <span id="dQty">1</span>
                     <button type="button" data-dq="1" aria-label="Agregar uno">+</button>
-                  </div>`}
-                  ${p.textoPersonalizado
-                    ? `<button type="button" class="btn btn--lg" data-customize="${p.id}">Personalizar y agregar</button>`
-                    : '<button type="submit" class="btn btn--lg">Agregar al carrito</button>'}
+                  </div>
+                  <button type="submit" class="btn btn--lg">Agregar al carrito</button>
                 </div>
               </form>
 
@@ -743,7 +714,7 @@
     const perso = it.perso
       ? `<div class="perso">${Object.entries(it.perso).map(([k, v]) => `<b>${PERSO_LABELS[k] || k}:</b> ${esc(v)}`).join('<br>')}</div>`
       : '';
-    const canCustomize = !isExtra(p) || p.textoPersonalizado;
+    const canCustomize = !isExtra(p);
     return `
       <div class="cart-item">
         <a href="#/producto/${p.id}"><img src="${p.fotos[0]}" alt="${esc(p.nombre)}" width="84" height="104"></a>
@@ -794,6 +765,7 @@
           <div class="cart-layout">
             <div>
               <div class="cart-list">${cart.map(cartItemHTML).join('')}</div>
+              ${cartHasFlowers() ? NATURE_NOTE : ''}
               ${upsellHTML({ wrap: true })}
             </div>
             <aside class="summary" aria-label="Resumen">
@@ -956,6 +928,7 @@
                   <textarea class="textarea" id="observaciones" name="observaciones" maxlength="250" placeholder="Algo que debamos saber para la entrega.">${esc(d.observaciones)}</textarea>
                 </div>
               </section>
+              ${cartHasFlowers() ? NATURE_NOTE : ''}
               <p class="form-alert" id="formAlert" role="alert">Nos faltan algunos datos. Revisa los campos marcados, por favor.</p>
             </div>
 
@@ -968,6 +941,7 @@
               <p class="note">Aún no pagas nada. Confirmamos disponibilidad, despacho y forma de pago por WhatsApp.</p>
               <button class="btn btn--block btn--lg" type="submit">Continuar</button>
               <a href="#/carrito" class="btn btn--block btn--outline" style="margin-top:10px">Volver al carrito</a>
+              <p class="legal-note">Al continuar aceptas nuestros <a href="#/terminos-y-condiciones">Términos y condiciones</a> y las políticas de <a href="#/cambios-y-cancelaciones">Cambios y cancelaciones</a>, <a href="#/despachos">Despachos</a> y <a href="#/politica-de-privacidad">Privacidad</a>.</p>
             </aside>
           </form>
         </div>`,
@@ -1144,6 +1118,7 @@
             <p class="lead">Continúa por WhatsApp para confirmar disponibilidad, despacho y coordinar el pago.</p>
             <a class="btn btn--wa btn--lg btn--block" id="waGo" href="${waLink(last.message)}" target="_blank" rel="noopener">${WA_ICON} Continuar por WhatsApp</a>
             <p class="pay-note">Medios de pago: efectivo, transferencia o tarjeta.</p>
+            ${flowerNote('flower-note--gap')}
 
             <details class="order-preview">
               <summary>Ver el mensaje de tu pedido <span aria-hidden="true">+</span></summary>
@@ -1185,6 +1160,7 @@
       html: `
         <section class="page-head"><div class="container"><p class="crumbs"><a href="#/">Inicio</a> / Cómo comprar</p><h1>Cómo comprar</h1><p>Cuatro pasos y tu regalo está en camino.</p></div></section>
         <section class="section"><div class="container">${stepsHTML()}
+          <div class="note-wrap">${NATURE_NOTE}</div>
           <div style="text-align:center;margin-top:34px"><a class="btn btn--lg" href="#/tienda">Elegir mi arreglo</a></div>
         </div></section>
         <section class="section section--cream">
@@ -1232,6 +1208,42 @@
     };
   }
 
+  /* ----- Políticas (el contenido se edita en js/politicas.js) ----- */
+  const politicaById = Object.fromEntries(POLITICAS.map((p) => [p.id, p]));
+
+  function pagePolicy(pol) {
+    const block = (c) => (Array.isArray(c)
+      ? `<ul>${c.map((li) => `<li>${esc(li)}</li>`).join('')}</ul>`
+      : `<p>${esc(c)}</p>`);
+    return {
+      title: pol.titulo,
+      html: `
+        <section class="page-head"><div class="container"><p class="crumbs"><a href="#/">Inicio</a> / ${esc(pol.titulo)}</p><h1>${esc(pol.titulo)}</h1><p>${esc(pol.resumen)}</p></div></section>
+        <section class="section">
+          <div class="container">
+            <article class="policy">
+              <p class="policy-date">Última actualización: ${esc(POLITICAS_ACTUALIZACION)}</p>
+              ${pol.aviso ? NATURE_NOTE : ''}
+              ${pol.secciones.map((s, i) => `
+                <section class="policy-section">
+                  <h2><span class="n">${i + 1}</span>${esc(s.t)}</h2>
+                  ${s.c.map(block).join('')}
+                  ${s.ver ? `<p><a class="link-btn" href="#/${s.ver}">Ver ${esc(politicaById[s.ver].titulo)}</a></p>` : ''}
+                </section>`).join('')}
+              <div class="policy-contact">
+                <h2>¿Tienes dudas?</h2>
+                <p>Escríbenos y te ayudamos antes de confirmar tu pedido.</p>
+                <a class="btn btn--wa" href="${waLink('Hola, tengo una consulta 🌸')}" target="_blank" rel="noopener">${WA_ICON} Escríbenos por WhatsApp</a>
+              </div>
+              <nav class="policy-nav" aria-label="Otras políticas">
+                ${POLITICAS.filter((x) => x.id !== pol.id).map((x) => `<a href="#/${x.id}">${esc(x.titulo)}</a>`).join('')}
+              </nav>
+            </article>
+          </div>
+        </section>`,
+    };
+  }
+
   function pageNotFound() {
     return {
       title: 'Página no encontrada',
@@ -1273,6 +1285,10 @@
             </ul>
           </div>
         </div>
+        <nav class="footer-legal" aria-label="Políticas">
+          ${POLITICAS.map((p) => `<a href="#/${p.id}">${esc(p.titulo)}</a>`).join('')}
+        </nav>
+        ${flowerNote('flower-note--start flower-note--footer')}
         <div class="footer-bottom">
           <span>© ${new Date().getFullYear()} ${esc(NEGOCIO.nombre)} · ${esc(NEGOCIO.ciudad)}, Chile</span>
           <span><a href="#/como-comprar">Cómo comprar</a> · <a href="#/contacto">Contacto</a></span>
@@ -1313,7 +1329,7 @@
       case 'confirmacion': page = pageConfirm(); break;
       case 'como-comprar': page = pageHowTo(); break;
       case 'contacto': page = pageContact(); break;
-      default: page = pageNotFound();
+      default: page = politicaById[route] ? pagePolicy(politicaById[route]) : pageNotFound();
     }
     if (page.redirect) { location.replace(page.redirect); return; }
 

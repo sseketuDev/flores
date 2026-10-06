@@ -12,7 +12,29 @@
      con su propio precio. El precio "desde" es el del primer tamaño.
    · destacado: true → aparece en "Más vendidos" del inicio.
    · extra: tipo de extra para "Hazlo aún más especial"
-     ('bombones' | 'globos' | 'peluches' | 'tazones').
+     ('bombones' | 'globos' | 'peluches').
+
+   ACTUALIZAR UN PRODUCTO (foto, descripción o precio)
+   ---------------------------------------------------------------------
+   1. Foto: guarda la imagen editada en /img/productos con el MISMO nombre
+      de archivo para reemplazarla sin tocar este archivo, o con un nombre
+      nuevo y cámbialo en "fotos". Formato ideal: vertical 4:5 (por
+      ejemplo 900 × 1125 px), JPG.
+   2. Descripción: "desc" es el texto corto de la tarjeta (1 línea).
+      "detalle" (opcional) es el texto completo de la página del producto;
+      si no se indica, se muestra "desc".
+   3. Precio: cambia "precio" y, si tiene tamaños, el precio de cada uno
+      en "tamanos" (el primero debe coincidir con "precio").
+
+   Plantilla de producto:
+
+   { id: 'identificador-unico', nombre: 'Nombre del arreglo', categoria: 'ramos',
+     ocasiones: ['amor', 'cumpleanos'],
+     precio: 25000, destacado: false,
+     desc: 'Descripción corta para la tarjeta.',
+     detalle: 'Descripción completa: flores, colores, medidas, qué incluye.',
+     fotos: [P + 'nombre-foto.jpg', P + 'nombre-foto-2.jpg'],
+     tamanos: [{ nombre: 'Mediano', precio: 25000 }, { nombre: 'Grande', precio: 33000 }] },
    ===================================================================== */
 
 const NEGOCIO = {
@@ -34,6 +56,12 @@ const NEGOCIO = {
   mapaEmbed: 'https://www.google.com/maps?q=Papudo+Norte+1001,+Los+Andes,+Chile&output=embed',
 };
 
+// Avisos que se muestran en tienda, producto, carrito, checkout y políticas
+const AVISOS = {
+  flores: 'Las flores pueden variar según disponibilidad, manteniendo estilo y valor del arreglo.',
+  artesanal: 'Cada arreglo es elaborado artesanalmente. Algunas flores, follajes o detalles pueden variar según disponibilidad de temporada, manteniendo siempre el estilo, tonalidad y valor del diseño elegido.',
+};
+
 const OCASIONES = [
   { id: 'cumpleanos',     nombre: 'Cumpleaños',     emoji: '🎂', desc: 'Para celebrar un año más',        foto: 'img/productos/arreglo-cumpleanos.jpg' },
   { id: 'amor',           nombre: 'Amor',           emoji: '❤️', desc: 'Para decir te amo sin palabras',  foto: 'img/productos/caja-corazon-dulce.jpg' },
@@ -51,7 +79,7 @@ const CATEGORIAS = [
   { id: 'nacimientos',    nombre: 'Nacimientos',      desc: 'Para dar la bienvenida al bebé',               foto: 'img/productos/bienvenida-princesa.jpg' },
   { id: 'condolencias',   nombre: 'Condolencias',     desc: 'Coronas, cubre urnas y arreglos de pie',       foto: 'img/productos/corona-paz-eterna.jpg' },
   { id: 'personalizados', nombre: 'Personalizados',   desc: 'Rosas azules, graduaciones, fotos y globos',   foto: 'img/productos/sombrerera-azul-girasoles.jpg' },
-  { id: 'extras',         nombre: 'Extras',           desc: 'Bombones, peluches, globos y más',             foto: 'img/productos/ferrero-corazon.jpg' },
+  { id: 'extras',         nombre: 'Extras',           desc: 'Bombones, peluches y globos',            foto: 'img/productos/ferrero-corazon.jpg' },
 ];
 
 const P = 'img/productos/';
@@ -342,12 +370,6 @@ const PRODUCTOS = [
     precio: 10000, sinDesde: true,
     desc: 'Oso de peluche con corazón "Te quiero".',
     fotos: [P + 'peluche-te-quiero.jpg'] },
-
-  { id: 'tazon-personalizado', nombre: 'Tazón personalizado', categoria: 'extras', extra: 'tazones',
-    ocasiones: ['cumpleanos', 'amor', 'agradecimiento', 'otra'],
-    precio: 8000, sinDesde: true, textoPersonalizado: true,
-    desc: 'Tazón con el nombre, frase o foto que quieras.',
-    fotos: [P + 'tazon.svg'] },
 
   { id: 'chupete-chocolate', nombre: 'Chupete de chocolate', categoria: 'extras', extra: 'bombones',
     ocasiones: ['cumpleanos', 'amor', 'otra'],
