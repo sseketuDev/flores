@@ -180,8 +180,9 @@ main { min-height: 60vh; outline: none; }
 .hero { background: var(--cream); overflow: hidden; }
 .hero-inner { display: grid; gap: 26px; padding-top: 30px; padding-bottom: 36px; }
 .hero-text { text-align: center; }
+.hero-logo { width: auto; height: clamp(190px, 52vw, 250px); margin: 0 auto 18px; }
 .hero h1 {
-  font-size: clamp(2.3rem, 9vw, 4rem); font-weight: 500; line-height: 1.05;
+  font-size: clamp(2.1rem, 8vw, 3.4rem); font-weight: 500; line-height: 1.05;
 }
 .hero h1 em { font-style: italic; color: var(--rose-dark); }
 .hero p { color: var(--muted); margin: 14px auto 24px; max-width: 30em; font-size: 15px; }
@@ -197,6 +198,7 @@ main { min-height: 60vh; outline: none; }
 @media (min-width: 900px) {
   .hero-inner { grid-template-columns: 1.05fr .95fr; align-items: center; gap: 60px; padding-top: 56px; padding-bottom: 64px; }
   .hero-text { text-align: left; }
+  .hero-logo { height: clamp(250px, 24vw, 320px); margin: 0 0 22px -6px; }
   .hero p { margin-left: 0; font-size: 16px; }
   .hero-meta { justify-content: flex-start; }
   .hero-img { max-height: 620px; }
@@ -318,6 +320,25 @@ main { min-height: 60vh; outline: none; }
   .card-actions .btn { font-size: 12.5px; }
 }
 
+/* ---------- Cotiza tu evento ---------- */
+.events-inner { display: grid; gap: 26px; }
+.events-img { border-radius: var(--radius); overflow: hidden; aspect-ratio: 3 / 2; box-shadow: var(--shadow); }
+.events-img img { width: 100%; height: 100%; object-fit: cover; }
+.events-text { text-align: center; }
+.events-text p { color: var(--muted); max-width: 34em; margin: 0 auto; }
+.events-text .events-lead { margin-top: 12px; font-size: 15.5px; }
+.events-types { list-style: none; margin: 18px 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.events-types li { padding: 5px 12px; border-radius: 999px; background: var(--rose-soft); color: var(--rose-dark); font-size: 12.5px; font-weight: 500; }
+.events-text .btn { margin-top: 22px; }
+.events-text .events-quote { margin-top: 22px; font-family: var(--serif); font-style: italic; font-size: 1.3rem; color: var(--teal); }
+.events-text .events-note { margin-top: 10px; font-size: 12px; }
+@media (min-width: 900px) {
+  .events-inner { grid-template-columns: 1.1fr 1fr; gap: 56px; align-items: center; }
+  .events-text { text-align: left; }
+  .events-text p { margin-left: 0; }
+  .events-types { justify-content: flex-start; }
+}
+
 /* ---------- Confianza ---------- */
 .trust { display: grid; gap: 14px; }
 .trust-item { display: flex; gap: 14px; align-items: flex-start; padding: 6px 0; }
@@ -392,6 +413,14 @@ main { min-height: 60vh; outline: none; }
 .detail-price { font-size: 1.5rem; font-weight: 600; margin: 6px 0 12px; }
 .detail-price small { font-size: 13px; font-weight: 400; color: var(--muted); }
 .detail-desc { color: var(--muted); font-size: 15px; }
+.detail-desc p + p { margin-top: 10px; }
+.detail-incluye { margin-top: 18px; }
+.detail-incluye h2 { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 8px; }
+.detail-incluye ul { margin: 0; padding-left: 18px; display: grid; gap: 4px 24px; color: var(--muted); font-size: 14px; }
+.detail-incluye li::marker { color: var(--rose); }
+@media (min-width: 480px) { .detail-incluye ul { grid-template-columns: 1fr 1fr; } }
+.detail-nota { display: flex; gap: 8px; align-items: flex-start; margin-top: 16px; font-size: 13px; line-height: 1.5; color: var(--muted); }
+.detail-nota svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; stroke: var(--rose-dark); }
 .field-label { display: block; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; margin: 22px 0 10px; }
 .size-options { display: flex; flex-wrap: wrap; gap: 8px; }
 .size-opt { position: relative; }
@@ -698,7 +727,7 @@ body.has-mobile-bar { padding-bottom: 84px; }
 /* ---------- Footer ---------- */
 .site-footer { background: var(--cream); border-top: 1px solid var(--line); padding: 50px 0 calc(28px + env(safe-area-inset-bottom)); font-size: 14px; }
 .footer-grid { display: grid; gap: 30px; }
-.footer-brand img { width: 120px; }
+.footer-brand img { width: 120px; height: auto; }
 .footer-brand p { color: var(--muted); margin-top: 12px; font-size: 13.5px; max-width: 26em; }
 .site-footer h3 { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; margin-bottom: 12px; color: var(--rose-dark); }
 .site-footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }

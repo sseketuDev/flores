@@ -260,7 +260,7 @@
   function sizeOptions(p, selected, name = 'size') {
     if (!p.tamanos) return '';
     return `
-      <span class="field-label" id="${name}-lbl">Tamaño</span>
+      <span class="field-label" id="${name}-lbl">${esc(p.tamanosLabel || 'Tamaño')}</span>
       <div class="size-options" role="radiogroup" aria-labelledby="${name}-lbl">
         ${p.tamanos.map((t, i) => `
           <label class="size-opt">
@@ -416,6 +416,7 @@
       <section class="hero">
         <div class="container hero-inner">
           <div class="hero-text">
+            <img class="hero-logo" src="${NEGOCIO.logo}" alt="${esc(NEGOCIO.nombre)}" width="614" height="804" fetchpriority="high">
             <span class="eyebrow">Florería en Los Andes</span>
             <h1>Flores que dicen <em>lo que sientes</em></h1>
             <p>Ramos, cajas y arreglos hechos a mano. Elige tu regalo en pocos clics, envíanos tu pedido y finalizamos la compra contigo por WhatsApp.</p>
@@ -426,7 +427,7 @@
             </div>
           </div>
           <div class="hero-img">
-            <img src="img/productos/hero.jpg" alt="Ramo de girasoles y rosas rojas de Florería Valentina" width="750" height="1000" fetchpriority="high">
+            <img src="img/productos/hero.jpg" alt="Ramo Jardín Encantado de Florería Valentina" width="960" height="1200" fetchpriority="high">
           </div>
         </div>
       </section>
@@ -486,7 +487,23 @@
         </div>
       </section>
 
-      <section class="section" aria-label="Por qué comprar con nosotros">
+      <section class="section events" aria-labelledby="ev-title">
+        <div class="container events-inner">
+          <div class="events-img reveal"><img src="${EVENTOS.foto}" alt="Arreglos florales para eventos" loading="lazy" width="1200" height="800"></div>
+          <div class="events-text reveal">
+            <span class="eyebrow">Eventos</span>
+            <h2 class="section-title" id="ev-title">${esc(EVENTOS.titulo)}</h2>
+            <p class="events-lead">${esc(EVENTOS.bajada)}</p>
+            <ul class="events-types">${EVENTOS.tipos.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
+            <p>${esc(EVENTOS.texto)}</p>
+            <a class="btn btn--lg" href="${waLink('Hola, quisiera cotizar flores para un evento 🌸')}" target="_blank" rel="noopener">Solicita tu cotización</a>
+            <p class="events-quote">“${esc(EVENTOS.frase)}”</p>
+            <p class="events-note">${esc(EVENTOS.nota)}</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--cream" aria-label="Por qué comprar con nosotros">
         <div class="container">${trustHTML()}</div>
       </section>`;
   }
@@ -637,7 +654,13 @@
               <h1>${esc(p.nombre)}</h1>
               <div class="tags">${p.ocasiones.map((o) => `<a class="tag" href="#/tienda?ocasion=${o}" style="text-decoration:none">${esc(ocasionById[o].nombre)}</a>`).join('')}</div>
               <p class="detail-price" id="dPrice">${p.sinDesde ? '' : '<small>desde </small>'}${fmt(p.precio)}</p>
-              <p class="detail-desc">${esc(p.detalle || p.desc)}</p>
+              <div class="detail-desc">${(p.detalle || p.desc).split('\n').map((t) => `<p>${esc(t)}</p>`).join('')}</div>
+              ${p.incluye ? `
+              <div class="detail-incluye">
+                <h2>Incluye</h2>
+                <ul>${p.incluye.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
+              </div>` : ''}
+              ${p.nota ? `<p class="detail-nota">${icon('alert')}<span>${esc(p.nota)}</span></p>` : ''}
 
               <form id="buyForm" novalidate>
                 ${sizeOptions(p)}
