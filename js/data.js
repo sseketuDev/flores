@@ -14,6 +14,8 @@
      con su propio precio. El precio "desde" es el del primer tamaño.
      "tamanosLabel" (opcional) cambia el título "Tamaño" (ej: 'Flor').
    · destacado: true → aparece en "Más vendidos" del inicio.
+   · cotizar: true → producto sin precio fijo ("A cotizar"): no se agrega
+     al carrito, se cotiza directo por WhatsApp. No lleva "precio".
    · extra: tipo de extra para "Hazlo aún más especial"
      ('bombones' | 'globos' | 'peluches').
 
@@ -54,13 +56,14 @@ const NEGOCIO = {
   whatsappVisible: '+56 9 3280 2792',
   instagram: 'floreriavalentinacl',
   facebook: 'Floreria Valentina',
-  facebookUrl: 'https://www.facebook.com/search/top?q=Floreria%20Valentina%20Los%20Andes',
+  facebookUrl: 'https://www.facebook.com/share/1HSChcDmRS/?mibextid=wwXIfr',
   email: 'floreriavalentinacl@gmail.com',
   mediosPago: 'efectivo, transferencia o tarjeta',
   // Logos (PNG con fondo transparente). Reemplaza los archivos para actualizarlos.
   logo: 'img/logo.png',                       // versión vertical (hero, footer)
   logoHorizontal: 'img/logo-horizontal.png',  // versión horizontal (header)
   mapaEmbed: 'https://www.google.com/maps?q=Papudo+Norte+1001,+Los+Andes,+Chile&output=embed',
+  mapaUrl: 'https://www.google.com/maps/search/?api=1&query=Papudo+Norte+1001,+Los+Andes,+Chile',  // botón "Cómo llegar"
 };
 
 // Avisos que se muestran en tienda, producto, carrito, checkout y políticas
@@ -89,7 +92,7 @@ const CATEGORIAS = [
   { id: 'detalles',     nombre: 'Detalles florales', desc: 'Pequeños detalles para grandes momentos',        foto: 'img/productos/dulce-detalle.jpg' },
   { id: 'nacimientos',  nombre: 'Nacimientos',       desc: 'Para dar la bienvenida al bebé',                 foto: 'img/productos/pequena-bienvenida.jpg' },
   { id: 'condolencias', nombre: 'Condolencias',      desc: 'Coronas y arreglos fúnebres',                    foto: 'img/productos/consuelo-eterno.jpg' },
-  { id: 'extras',       nombre: 'Extras',            desc: 'Globos, peluches y chocolates',                  foto: 'img/productos/ferrero-rocher.jpg' },
+  { id: 'extras',       nombre: 'Extras',            desc: 'Globos, peluches, chocolates y cintas',          foto: 'img/productos/ferrero-rocher.jpg' },
 ];
 
 // Sección "Cotiza tu evento" del inicio
@@ -190,6 +193,14 @@ const PRODUCTOS = [
     fotos: [P + 'un-detalle-para-ti.jpg', P + 'un-detalle-para-ti-2.jpg'],
     tamanosLabel: 'Flor',
     tamanos: [{ nombre: 'Rosa roja', precio: 7000 }, { nombre: 'Girasol', precio: 7000 }] },
+
+  { id: 'ramo-de-novia', nombre: 'Ramos de Novia', categoria: 'ramos',
+    ocasiones: ['novias'],
+    cotizar: true,
+    desc: 'Ramos de novia 100% personalizados, únicos para tu día.',
+    detalle: 'Ramos de novia confeccionados especialmente para acompañarte en uno de los días más importantes de tu vida. Cada diseño es único y preparado con dedicación según tus preferencias.\nDiseño 100% personalizado. Puedes escoger estilo, tonalidades, tipo de flores, tamaño y detalles especiales.',
+    nota: 'Las flores están sujetas a disponibilidad y temporada. El valor dependerá del diseño, tamaño y variedades seleccionadas.',
+    fotos: [P + 'novias.jpg'] },
 
   /* ---------------- COLECCIÓN PREMIUM ---------------- */
   { id: 'amor-infinito', nombre: 'Amor Infinito', categoria: 'premium',
@@ -397,6 +408,14 @@ const PRODUCTOS = [
     detalle: 'Complementa tu arreglo floral con un tierno peluche, ideal para hacer tu regalo aún más especial y personalizado.',
     nota: 'Modelos, colores y diseños sujetos a disponibilidad. Puedes consultar las opciones disponibles al momento de realizar tu pedido.',
     fotos: [P + 'peluche.jpg'] },
+
+  { id: 'cinta-personalizada', nombre: 'Cinta personalizada', categoria: 'extras',
+    ocasiones: ['condolencias'],
+    precio: 10000, sinDesde: true,
+    desc: 'Cinta con el texto o mensaje que elijas.',
+    detalle: 'Complementa tu arreglo floral con una cinta personalizada, ideal para expresar un mensaje especial de despedida, condolencias, cariño o recuerdo.\nLa cinta puede ser 100% personalizada, permitiendo escoger el texto o mensaje que desees incluir según la ocasión.',
+    nota: 'El diseño y distribución del texto se adaptarán al mensaje solicitado y al tamaño de la cinta. Envíanos el texto tal como deseas que aparezca al momento de realizar tu pedido.',
+    fotos: [P + 'cinta-personalizada.jpg'] },
 ];
 
 // Franjas horarias de entrega

@@ -148,9 +148,14 @@
   });
 
   /* ---------------- Componentes ---------------- */
-  const priceHTML = (p) => p.sinDesde
+  const priceHTML = (p) => p.cotizar
+    ? '<p class="price">A cotizar</p>'
+    : p.sinDesde
     ? `<p class="price">${fmt(p.precio)}</p>`
     : `<p class="price"><small>desde</small>${fmt(p.precio)}</p>`;
+
+  // Productos "a cotizar": sin carrito, se piden directo por WhatsApp
+  const quoteBtn = (p, cls = 'btn') => `<a class="${cls}" href="${waLink(`Hola, quisiera cotizar ${p.nombre} 🌸`)}" target="_blank" rel="noopener">Cotizar por WhatsApp</a>`;
 
   function productCard(p) {
     const tags = p.ocasiones.slice(0, 2).map((o) => `<span class="tag">${esc(ocasionById[o].etiqueta || ocasionById[o].nombre)}</span>`).join('');
@@ -165,8 +170,9 @@
           <p class="card-desc">${esc(p.desc)}</p>
           ${priceHTML(p)}
           <div class="card-actions">
+            ${p.cotizar ? quoteBtn(p) : `
             <button class="btn" data-add="${p.id}">Agregar al carrito</button>
-            <button class="btn btn--outline" data-customize="${p.id}">Personalizar</button>
+            <button class="btn btn--outline" data-customize="${p.id}">Personalizar</button>`}
           </div>
         </div>
       </article>`;
@@ -392,7 +398,7 @@
     { icon: 'bouquet', t: 'Elige tu arreglo', d: 'Busca por categoría o tipo y agrégalo al carrito.' },
     { icon: 'form', t: 'Completa los datos de entrega', d: 'Quién envía, quién recibe, fecha y dedicatoria.' },
     { icon: 'chat', t: 'Confirma por WhatsApp', d: 'Te llega el pedido armado; confirmamos stock y pago.' },
-    { icon: 'gift', t: 'Recibe o retira tu pedido', d: 'Despachamos en Los Andes o lo retiras en tienda.' },
+    { icon: 'gift', t: 'Recibe o retira tu pedido', d: 'Despachamos a domicilio o lo retiras en tienda.' },
   ];
   const stepsHTML = () => `
     <div class="steps">
@@ -422,7 +428,7 @@
             <p>Ramos, cajas y arreglos hechos a mano. Elige tu regalo en pocos clics, envíanos tu pedido y finalizamos la compra contigo por WhatsApp.</p>
             <a href="#/tienda" class="btn btn--lg">Ver arreglos</a>
             <div class="hero-meta">
-              <span>${icon('truck')} Despacho en Los Andes</span>
+              <span>${icon('truck')} Despachos en el Valle del Aconcagua y alrededores</span>
               <span>${icon('store')} Retiro en tienda</span>
             </div>
           </div>
@@ -505,6 +511,28 @@
 
       <section class="section section--cream" aria-label="Por qué comprar con nosotros">
         <div class="container">${trustHTML()}</div>
+      </section>
+
+      <section class="section" aria-labelledby="visit-title">
+        <div class="container">
+          <div class="section-head">
+            <span class="eyebrow">Te esperamos</span>
+            <h2 class="section-title" id="visit-title">Visítanos</h2>
+          </div>
+          <div class="contact-grid">
+            <div class="reveal">
+              <div class="contact-list">
+                <div>${icon('pin')}<div><p class="k">Dirección</p><p class="v">${esc(NEGOCIO.direccion)}</p></div></div>
+                <div>${icon('clock')}<div><p class="k">Horario</p><p class="v">${esc(NEGOCIO.horario)}</p><p style="font-size:13px;color:var(--muted)">${esc(NEGOCIO.horarioNota)}</p></div></div>
+                <div>${icon('phone')}<div><p class="k">WhatsApp</p><p class="v"><a href="${waLink('Hola, tengo una consulta 🌸')}" target="_blank" rel="noopener">${esc(NEGOCIO.whatsappVisible)}</a></p></div></div>
+              </div>
+              <a class="btn btn--lg btn--block" style="margin-top:24px" href="${NEGOCIO.mapaUrl}" target="_blank" rel="noopener">Cómo llegar</a>
+            </div>
+            <div class="map reveal">
+              <iframe src="${NEGOCIO.mapaEmbed}" title="Mapa: ${esc(NEGOCIO.direccion)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+          </div>
+        </div>
       </section>`;
   }
 
@@ -512,8 +540,9 @@
   function filterProducts({ ocasion, cat, orden }) {
     let list = PRODUCTOS.filter((p) => (!ocasion || p.ocasiones.includes(ocasion)) && (!cat || p.categoria === cat));
     if (!cat && !ocasion) list = list.filter((p) => !isExtra(p)).concat(list.filter(isExtra)); // extras al final
-    if (orden === 'asc') list = [...list].sort((a, b) => a.precio - b.precio);
-    if (orden === 'desc') list = [...list].sort((a, b) => b.precio - a.precio);
+    const precio = (p) => p.precio || 0; // "a cotizar" no tiene precio
+    if (orden === 'asc') list = [...list].sort((a, b) => precio(a) - precio(b));
+    if (orden === 'desc') list = [...list].sort((a, b) => precio(b) - precio(a));
     return list;
   }
 
@@ -653,7 +682,7 @@
               <p class="crumbs"><a href="#/">Inicio</a> / <a href="#/tienda?cat=${cat.id}">${esc(cat.nombre)}</a></p>
               <h1>${esc(p.nombre)}</h1>
               <div class="tags">${p.ocasiones.map((o) => `<a class="tag" href="#/tienda?ocasion=${o}" style="text-decoration:none">${esc(ocasionById[o].nombre)}</a>`).join('')}</div>
-              <p class="detail-price" id="dPrice">${p.sinDesde ? '' : '<small>desde </small>'}${fmt(p.precio)}</p>
+              <p class="detail-price" id="dPrice">${p.cotizar ? 'A cotizar' : (p.sinDesde ? '' : '<small>desde </small>') + fmt(p.precio)}</p>
               <div class="detail-desc">${(p.detalle || p.desc).split('\n').map((t) => `<p>${esc(t)}</p>`).join('')}</div>
               ${p.incluye ? `
               <div class="detail-incluye">
@@ -662,6 +691,7 @@
               </div>` : ''}
               ${p.nota ? `<p class="detail-nota">${icon('alert')}<span>${esc(p.nota)}</span></p>` : ''}
 
+              ${p.cotizar ? `<div class="buy-row">${quoteBtn(p, 'btn btn--lg')}</div>` : `
               <form id="buyForm" novalidate>
                 ${sizeOptions(p)}
                 <details class="customize" id="customize">
@@ -679,7 +709,7 @@
                   </div>
                   <button type="submit" class="btn btn--lg">Agregar al carrito</button>
                 </div>
-              </form>
+              </form>`}
 
               ${isExtra(p) ? '' : NATURE_NOTE}
 
@@ -701,17 +731,17 @@
         let qty = 1;
         const form = $('#buyForm');
         const priceEl = $('#dPrice');
-        form.addEventListener('change', (e) => {
+        if (form) form.addEventListener('change', (e) => {
           if (e.target.name === 'size') {
             const t = p.tamanos.find((s) => s.nombre === e.target.value);
             priceEl.innerHTML = fmt(t.precio);
           }
         });
-        $$('[data-dq]', form).forEach((b) => b.addEventListener('click', () => {
+        if (form) $$('[data-dq]', form).forEach((b) => b.addEventListener('click', () => {
           qty = Math.max(1, Math.min(20, qty + Number(b.dataset.dq)));
           $('#dQty').textContent = qty;
         }));
-        form.addEventListener('submit', (e) => {
+        if (form) form.addEventListener('submit', (e) => {
           e.preventDefault();
           const sizeEl = form.querySelector('[name="size"]:checked');
           addToCart(p.id, { size: sizeEl ? sizeEl.value : null, perso: readPerso(form), qty });
@@ -1297,7 +1327,7 @@
           <div>
             <h3>Visítanos</h3>
             <ul>
-              <li>${esc(NEGOCIO.direccion)}</li>
+              <li><a href="${NEGOCIO.mapaUrl}" target="_blank" rel="noopener">${esc(NEGOCIO.direccion)}</a></li>
               <li>${esc(NEGOCIO.horario)}</li>
               <li>${esc(NEGOCIO.horarioNota)}</li>
               <li>Pago: efectivo, transferencia y tarjetas</li>
