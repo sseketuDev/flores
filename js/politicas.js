@@ -164,7 +164,7 @@ const POLITICAS = [
         'El pedido enviado desde el sitio es una solicitud de compra. La compra queda confirmada cuando te confirmamos por WhatsApp la disponibilidad y el valor total, y se acuerda el pago.',
       ] },
       { t: 'Precios', c: [
-        'Los precios se expresan en pesos chilenos. Los precios indicados como “desde” corresponden a la versión base del arreglo y pueden variar según el tamaño y la personalización solicitada.',
+        'Los precios se expresan en pesos chilenos. El precio publicado corresponde al arreglo de la foto. Las modificaciones o personalizaciones solicitadas quedan sujetas a cotización.',
         'El total que muestra el sitio es estimado y no incluye el despacho. El valor final se confirma por WhatsApp antes del pago.',
       ] },
       { t: 'Medios de pago', c: [

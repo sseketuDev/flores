@@ -11,7 +11,8 @@
      los ids de la lista OCASIONES (puede tener varias): 'amor' |
      'cumpleanos' | 'nacimiento' | 'novias' | 'condolencias' | 'toda-ocasion'.
    · tamanos (opcional): si el producto viene en varios tamaños, cada uno
-     con su propio precio. El precio "desde" es el del primer tamaño.
+     con su propio precio. Solo en ese caso la tarjeta muestra "desde"
+     (el precio del primer tamaño); el resto lleva precio fijo.
      "tamanosLabel" (opcional) cambia el título "Tamaño" (ej: 'Flor').
    · destacado: true → aparece en "Más vendidos" del inicio.
    · cotizar: true → producto sin precio fijo ("A cotizar"): no se agrega
@@ -186,7 +187,7 @@ const PRODUCTOS = [
 
   { id: 'un-detalle-para-ti', nombre: 'Un Detalle para Ti', categoria: 'ramos',
     ocasiones: ['amor', 'toda-ocasion'],
-    precio: 7000, sinDesde: true,
+    precio: 7000,
     desc: 'Una rosa roja o un girasol, un pequeño gesto lleno de cariño.',
     detalle: 'Un detalle sencillo y especial, protagonizado por una rosa roja o un girasol, acompañada de pequeñas flores blancas y follaje verde decorativo, creando una presentación delicada y romántica.\nPresentado en papel floral en tonos blanco y crema con detalles dorados, envoltorio translúcido y terminado con cinta roja, ideal para sorprender con un pequeño gesto lleno de cariño.',
     incluye: ['Rosa roja o girasol', 'Flores blancas de complemento', 'Follaje verde decorativo', 'Papel floral decorativo', 'Cinta roja'],
@@ -387,7 +388,7 @@ const PRODUCTOS = [
   /* ---------------- EXTRAS ---------------- */
   { id: 'ferrero-rocher', nombre: 'Ferrero Rocher', categoria: 'extras', extra: 'bombones',
     ocasiones: ['amor', 'cumpleanos', 'toda-ocasion'],
-    precio: 10000, sinDesde: true,
+    precio: 10000,
     desc: 'Caja de chocolates Ferrero Rocher.',
     detalle: 'Agrega un toque dulce a tu regalo con una caja de chocolates Ferrero Rocher, ideal para complementar cualquiera de nuestros arreglos florales y hacerlo aún más especial.',
     nota: 'Producto sujeto a disponibilidad de stock.',
@@ -395,7 +396,7 @@ const PRODUCTOS = [
 
   { id: 'globo-tematico', nombre: 'Globo temático', categoria: 'extras', extra: 'globos',
     ocasiones: ['cumpleanos', 'amor', 'nacimiento', 'toda-ocasion'],
-    precio: 2000, sinDesde: true,
+    precio: 2000,
     desc: 'Globo con mensaje acorde a la ocasión.',
     detalle: 'Agrega un detalle especial a tu arreglo con un globo temático acorde a la ocasión. Contamos con diferentes diseños y mensajes para cumpleaños, nacimientos, aniversarios, celebraciones y fechas especiales.\nOpciones: Cumpleaños · Te Amo · Día de la Mamá · Día del Papá · Nacimientos · Felicitaciones y otros.',
     nota: 'Diseños sujetos a disponibilidad. Puedes consultar los modelos disponibles al momento de realizar tu pedido y escoger tu favorito.',
@@ -403,7 +404,7 @@ const PRODUCTOS = [
 
   { id: 'peluche', nombre: 'Peluche', categoria: 'extras', extra: 'peluches',
     ocasiones: ['amor', 'cumpleanos', 'toda-ocasion'],
-    precio: 10000, sinDesde: true,
+    precio: 10000,
     desc: 'Tierno peluche para acompañar tu arreglo.',
     detalle: 'Complementa tu arreglo floral con un tierno peluche, ideal para hacer tu regalo aún más especial y personalizado.',
     nota: 'Modelos, colores y diseños sujetos a disponibilidad. Puedes consultar las opciones disponibles al momento de realizar tu pedido.',
@@ -411,7 +412,7 @@ const PRODUCTOS = [
 
   { id: 'cinta-personalizada', nombre: 'Cinta personalizada', categoria: 'extras',
     ocasiones: ['condolencias'],
-    precio: 10000, sinDesde: true,
+    precio: 10000,
     desc: 'Cinta con el texto o mensaje que elijas.',
     detalle: 'Complementa tu arreglo floral con una cinta personalizada, ideal para expresar un mensaje especial de despedida, condolencias, cariño o recuerdo.\nLa cinta puede ser 100% personalizada, permitiendo escoger el texto o mensaje que desees incluir según la ocasión.',
     nota: 'El diseño y distribución del texto se adaptarán al mensaje solicitado y al tamaño de la cinta. Envíanos el texto tal como deseas que aparezca al momento de realizar tu pedido.',

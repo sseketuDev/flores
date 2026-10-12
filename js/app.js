@@ -148,9 +148,11 @@
   });
 
   /* ---------------- Componentes ---------------- */
+  // Precio fijo: solo se muestra "desde" si el producto tiene tamaños con precios distintos
+  const conDesde = (p) => !!p.tamanos && p.tamanos.some((t) => t.precio !== p.precio);
   const priceHTML = (p) => p.cotizar
     ? '<p class="price">A cotizar</p>'
-    : p.sinDesde
+    : !conDesde(p)
     ? `<p class="price">${fmt(p.precio)}</p>`
     : `<p class="price"><small>desde</small>${fmt(p.precio)}</p>`;
 
@@ -283,7 +285,7 @@
       <div class="added-head">${icon('check')} Agregado a tu pedido</div>
       <div class="modal-product">
         <img src="${p.fotos[0]}" alt="">
-        <div><strong>${esc(p.nombre)}</strong><span>${p.sinDesde ? '' : 'desde '}${fmt(p.precio)}</span></div>
+        <div><strong>${esc(p.nombre)}</strong><span>${conDesde(p) ? 'desde ' : ''}${fmt(p.precio)}</span></div>
       </div>
       ${upsellHTML()}
       <div class="modal-actions">
@@ -301,7 +303,7 @@
       <p class="modal-sub">Cuéntanos tus preferencias y lo armamos para ti.</p>
       <div class="modal-product">
         <img src="${p.fotos[0]}" alt="">
-        <div><strong>${esc(p.nombre)}</strong><span>${p.sinDesde ? '' : 'desde '}${fmt(p.precio)}</span></div>
+        <div><strong>${esc(p.nombre)}</strong><span>${conDesde(p) ? 'desde ' : ''}${fmt(p.precio)}</span></div>
       </div>
       <form id="persoForm" novalidate>
         ${sizeOptions(p, item && item.size, 'm-size')}
@@ -397,7 +399,7 @@
   const STEPS = [
     { icon: 'bouquet', t: 'Elige tu arreglo', d: 'Busca por categoría o tipo y agrégalo al carrito.' },
     { icon: 'form', t: 'Completa los datos de entrega', d: 'Quién envía, quién recibe, fecha y dedicatoria.' },
-    { icon: 'chat', t: 'Confirma por WhatsApp', d: 'Te llega el pedido armado; confirmamos stock y pago.' },
+    { icon: 'chat', t: 'Confirma por WhatsApp', d: 'Recibimos tu pedido por WhatsApp y confirmamos disponibilidad, despacho y pago.' },
     { icon: 'gift', t: 'Recibe o retira tu pedido', d: 'Despachamos a domicilio o lo retiras en tienda.' },
   ];
   const stepsHTML = () => `
@@ -518,6 +520,11 @@
           <div class="section-head">
             <span class="eyebrow">Te esperamos</span>
             <h2 class="section-title" id="visit-title">Visítanos</h2>
+          </div>
+          <div class="visit-news reveal">
+            <h3>Nueva sucursal próximamente 🌸</h3>
+            <p>Estamos preparando un nuevo espacio para ti. ¡Pronto anunciaremos nuestra dirección!</p>
+            <p>Mientras tanto, puedes seguir encontrándonos en <strong>Papudo Norte 1001, Los Andes</strong> (costado del cementerio).</p>
           </div>
           <div class="contact-grid">
             <div class="reveal">
@@ -682,7 +689,7 @@
               <p class="crumbs"><a href="#/">Inicio</a> / <a href="#/tienda?cat=${cat.id}">${esc(cat.nombre)}</a></p>
               <h1>${esc(p.nombre)}</h1>
               <div class="tags">${p.ocasiones.map((o) => `<a class="tag" href="#/tienda?ocasion=${o}" style="text-decoration:none">${esc(ocasionById[o].nombre)}</a>`).join('')}</div>
-              <p class="detail-price" id="dPrice">${p.cotizar ? 'A cotizar' : (p.sinDesde ? '' : '<small>desde </small>') + fmt(p.precio)}</p>
+              <p class="detail-price" id="dPrice">${p.cotizar ? 'A cotizar' : fmt(p.precio)}</p>
               <div class="detail-desc">${(p.detalle || p.desc).split('\n').map((t) => `<p>${esc(t)}</p>`).join('')}</div>
               ${p.incluye ? `
               <div class="detail-incluye">
@@ -696,7 +703,7 @@
                 ${sizeOptions(p)}
                 <details class="customize" id="customize">
                   <summary>
-                    <span>¿Quieres personalizarlo?<span class="hint">Colores, tipo de flor, presupuesto o ideas.</span></span>
+                    <span>¿Quieres personalizarlo?<span class="hint">Colores, tipo de flor, presupuesto o ideas. Las modificaciones quedan sujetas a cotización.</span></span>
                     <span class="plus" aria-hidden="true">+</span>
                   </summary>
                   <div class="customize-body">${persoFields()}</div>
@@ -768,7 +775,7 @@
   function cartItemHTML(it) {
     const p = byId[it.id];
     const unit = unitPrice(it);
-    const meta = [it.size, p.sinDesde ? fmt(unit) + ' c/u' : 'desde ' + fmt(unit) + ' c/u'].filter(Boolean).join(' · ');
+    const meta = [it.size, fmt(unit) + ' c/u'].filter(Boolean).join(' · ');
     const perso = it.perso
       ? `<div class="perso">${Object.entries(it.perso).map(([k, v]) => `<b>${PERSO_LABELS[k] || k}:</b> ${esc(v)}`).join('<br>')}</div>`
       : '';
@@ -813,7 +820,7 @@
           </div>`,
       };
     }
-    const hasDesde = cart.some((it) => !byId[it.id].sinDesde);
+    const hasPerso = cart.some((it) => it.perso);
     return {
       title: 'Carrito',
       mobileBar: true,
@@ -831,7 +838,7 @@
               <div class="summary-line"><span>Productos</span><span>${fmt(cartTotal())}</span></div>
               <div class="summary-line"><span>Despacho</span><span style="color:var(--muted)">A confirmar</span></div>
               <div class="summary-line total"><span>Total estimado</span><span>${fmt(cartTotal())}</span></div>
-              <p class="note">${hasDesde ? 'Los precios son "desde" y pueden ajustarse según tamaño y personalización. ' : ''}El costo de despacho y el pago se confirman por WhatsApp.</p>
+              <p class="note">${hasPerso ? 'Las modificaciones o personalizaciones quedan sujetas a cotización. ' : ''}El costo de despacho y el pago se confirman por WhatsApp.</p>
               <a class="btn btn--block btn--lg" href="#/checkout">Finalizar pedido</a>
               <a class="btn btn--block btn--outline" href="#/tienda" style="margin-top:10px">Seguir comprando</a>
             </aside>
@@ -1141,7 +1148,7 @@
     o.items.forEach((it) => {
       const p = byId[it.id];
       const name = p.nombre + (it.size ? ` (${it.size})` : '');
-      const price = (p.sinDesde ? '' : 'desde ') + fmt(unitPrice(it) * it.qty);
+      const price = fmt(unitPrice(it) * it.qty);
       L.push(`- ${name} x${it.qty} – ${price}`);
       if (it.perso) L.push(`  Personalización: ${persoText(it.perso)}`);
     });
